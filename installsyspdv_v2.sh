@@ -21,14 +21,6 @@ CYAN='\033[1;36m'
 BG_PURPLE='\033[45;1;37m'
 NC='\033[0m' # Sem cor
 
-# Ícones
-INSTALL_ICON="🔧"
-UPDATE_ICON="🔄"
-INVALID_ICON="❌"
-DONE_ICON="✅"
-
-DOWNLOAD_DIR='/home/pdv/Downloads'
-
 # --------------------
 # **** Funções *******
 # --------------------
@@ -38,18 +30,18 @@ requisitos(){
 
   echo "Verificando dependencias..."
 
-  # wget
-  if ! command -v wget &> /dev/null; then
-    echo "Instalando wget"
-    sudo apt update && sudo apt install -y wget
+  # curl
+  if ! command -v curl &> /dev/null; then
+    echo "Instalando curl"
+    sudo apt update && sudo apt install -y curl
     if [ $? -eq 0 ]; then
-      echo "O wget foi instalado com sucesso."
+      echo "O curl foi instalado com sucesso."
     else
-      echo "Falha na instalação do wget."
+      echo "Falha na instalação do curl."
       exit 1
     fi
   else
-    echo "O wget -> OK"
+    echo -e "${GREEN}dep: curl -> OK${NC}"
   fi
 
 }
@@ -88,6 +80,15 @@ configurar_perifericos() {
   fi
 }
 
+instalar_vpn() {
+	read -p "Deseja instalar a VPN?(S/n)"
+	if [[ "$confirm" == "" || "$confirm" == "S" || "$confirm" == "s" ]]; then
+    ./dep/wnbinstall.sh -i
+  else
+    echo "Configuração de perifericos cancelado."
+  fi
+}
+
 # Função para instalar o SysPDV
 instalar_syspdv() {
   requisitos
@@ -96,6 +97,7 @@ instalar_syspdv() {
   if [[ "$confirm" == "" || "$confirm" == "S" || "$confirm" == "s" ]]; then
     baixar_build
     configurar_perifericos
+    instalar_vpn
   else
     echo "Instalação cancelada!"
   fi
@@ -106,7 +108,7 @@ atualizar_syspdv() {
   read -p "Deseja atualizar o SysPDV? (S/n) " confirm
 
   if [[ "$confirm" == "" || "$confirm" == "S" || "$confirm" == "s" ]]; then
-    echo "Atualização........"
+    baixar_build
   else
     echo "Atualização cancelada!"
   fi
@@ -116,13 +118,14 @@ atualizar_syspdv() {
 # ****** MENU ********
 # --------------------
 while true; do
-  echo -e "${CYAN}--------------------------------${NC}"
+  echo -e "--------------------------------"
   echo ""
-  echo -e "${CYAN}${INSTALL_ICON}  1. Instalar o SysPDV PDV.${NC}"
-  echo -e "${CYAN}${UPDATE_ICON}  2. Atualizar o SysPDV PDV.${NC}"
+  echo -e "1. Instalar o SysPDV PDV."
+  echo -e "2. Atualizar o SysPDV PDV."
+  echo -e "3. Instalar VPN."
   echo ""
-  echo -e "${CYAN}Pressione CTRL + C para sair.${NC}"
-  echo -e "${CYAN}--------------------------------${NC}"
+  echo -e "Pressione CTRL + C para sair."
+  echo -e "--------------------------------"
   echo ""
   read -p "Escolha uma opção: " opc
 
@@ -130,13 +133,19 @@ while true; do
   1)
     clear
     instalar_syspdv
-    echo -e "${GREEN}Instalação concluída ${DONE_ICON}${NC}"
+    echo -e "${GREEN}Instalação concluída!${DONE_ICON}${NC}"
     exit
     ;;
   2)
     clear
     atualizar_syspdv
-    echo -e "${GREEN}Atualização concluída ${DONE_ICON}${NC}"
+    echo -e "${GREEN}Atualização concluída!${DONE_ICON}${NC}"
+    exit
+    ;;
+  3)
+    clear
+    instalar_vpn
+    echo -e "${GREEN}VPN Instalada!${DONE_ICON}${NC}"
     exit
     ;;
   *)
