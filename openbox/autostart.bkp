@@ -1,0 +1,26 @@
+# These things are run when an Openbox X Session is started.
+# You may place a similar script in $HOME/.config/openbox/autostart
+# to run user-specific things.
+#
+
+# If you want to use GNOME config tools...
+#
+#if test -x /usr/lib/openbox/gnome-settings-daemon >/dev/null; then
+#  /usr/lib/openbox/gnome-settings-daemon &
+#elif which gnome-settings-daemon >/dev/null; then
+#  gnome-settings-daemon &
+#fi
+
+# If you want to use XFCE config tools...
+#
+xrandr -s 1024x768
+sudo -i /usr/local/bin/wallpaper 1> /dev/null 2>&1 &
+sudo -i /usr/local/bin/ssh_keygen_rsa 1> /dev/null 2>&1
+#sudo -i /etc/init.d/portasmak start 1> /dev/null 2>&1
+#sudo -i /etc/init.d/smakserial start 1> /dev/null 2>&1
+sudo -i killall tec55usbd 1> /dev/null 2>&1
+#sudo -i killall redirectHID 1> /dev/null 2>&1
+sudo -i /opt/Gertec55/tec55start 1> /dev/null 2>&1
+sudo /usr/local/bin/vnc-server start
+#sudo /etc/init.d/servidorbiometrico start
+sudo -i /usr/local/bin/syspdv
